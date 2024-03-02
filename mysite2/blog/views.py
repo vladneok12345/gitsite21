@@ -10,6 +10,15 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
+
+
+
+@login_required
+def dashboard(request):
+    user=request.user
+    post_pub=Post.objects.filter(author=user, status='published')
+    post_draft=Post.objects.filter(author=user, status='draft')
+    return render(request,'blog/account/dashboard.html', {'post_pub':posts_pub,'post_daft':post_draft})
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
