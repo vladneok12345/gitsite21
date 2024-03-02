@@ -31,11 +31,16 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+LOGIN_REDIRECT_URL='blog:post_list'
+LOGIN_URL='blog:login'
+LOGOUT_URL='blog:log_out'
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrapform',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
-    'taggit'
+    'taggit',
 ]
 
 MIDDLEWARE = [
