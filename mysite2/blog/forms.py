@@ -1,6 +1,13 @@
 from .models import Comment
 from django import forms
 from .models import Post
+
+from .models import PostPoint
+
+class PostPointForm(forms.ModelForm):
+    class Meta:
+        model = PostPoint
+        fields = ('post_header', 'post_point_text', 'post_images')
 class PostForm(forms.ModelForm):
     class Meta:
         model=Post

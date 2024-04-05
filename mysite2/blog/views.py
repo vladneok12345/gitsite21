@@ -1,19 +1,52 @@
 from django.shortcuts import render ,get_object_or_404
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
-# Create your views here.
 from .models import Post, PostPoint
 from django.views.generic import ListView
 from taggit.models import Tag
 from django.db.models import Count
-
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
-
-
-
+from django.shortcuts import redirect
+from .forms import CommentForm, PostForm, PostPointForm
 from .forms import PostForm
+
+@login_required
+def post_point_add(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = PostPointForm()
+
+    if request.method == 'POST':
+        form = PostPointForm(request.POST,
+                             request.FILES)
+        if form.is_valid():
+            post_point = form.save(commit=False)
+            post_point.post = post
+            post_point.save()
+
+    return render(request, 'blog/account/post_point_add.html', {'form': form,
+                                                                'post': post})
+@login_required
+def post_point_list(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    post_points = PostPoint.objects.filter(
+        post=post)
+    return render(request,
+                  'blog/account/post_points.html',
+                  {'post': post,
+                   'post_points': post_points})
+@login_required
+def post_delete(request, post_id):
+    try:
+        post = get_object_or_404(Post,
+                                 id=post_id)
+        post.delete()
+        return redirect('blog:dashboard')
+    except Post.DoesNotExist:
+        return redirect('blog:dashboard')
+
 
 @login_required
 def post_edit(request, post_id):
