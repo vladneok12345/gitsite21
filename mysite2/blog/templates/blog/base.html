@@ -32,7 +32,7 @@
             <a href="{% url 'blog:dashboard' %}" class="pr-3">
                 {{ request.user.first_name }}
             </a>
-            <a href="{% url 'blog:logout' %}">Вийти</a>
+            <a href="{% url 'blog:login' %}">Вийти</a>
         {% else %}
             <a href="{% url 'blog:login' %}">Увійти</a>
         {% endif %}

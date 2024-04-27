@@ -1,16 +1,31 @@
 from django.shortcuts import render ,get_object_or_404
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
-from .models import Post, PostPoint
+from .models import Post, PostPoint, User
 from django.views.generic import ListView
 from taggit.models import Tag
 from django.db.models import Count
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+from .forms import LoginForm, UserCreateForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from .forms import CommentForm, PostForm, PostPointForm
 from .forms import PostForm
+
+
+def sign_up(request):
+    user_form=UserCreateForm()
+    if request.method == 'POST':
+        user_form=UserCreateForm(request.POST)
+        if user_form.is_valid():
+            new_user=User.objects.create_user(**user_form.cleaned_data)
+            new_user.save()
+            login(request, authenticate(username=user_form.cleaned_data['username'],
+                                        password=user_form.cleaned_data['password']))
+            return redirect('blog:post_list')
+    return render(request,'registration/sign_up.html',
+                                {'user_form':user_form})
+
 
 @login_required
 def post_point_add(request, post_id):
