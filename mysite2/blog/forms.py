@@ -2,6 +2,14 @@ from .models import Comment, User
 from django import forms
 from .models import Post
 from .models import PostPoint
+
+class SearchForm(forms.Form):
+    query=forms.CharField(widget=forms.TextInput(attrs={
+        'class':'form-control mr-sm-2',
+        'type':'search',
+        'placeholder':'Search',
+        'aria-label':'Search'
+    }))
 class UserEditForm(forms.ModelForm):
     class Meta:
         model=User

@@ -6,12 +6,13 @@ from taggit.models import Tag
 from django.db.models import Count
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, UserCreateForm
+from .forms import LoginForm, UserCreateForm, SearchForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from .forms import CommentForm, PostForm, PostPointForm
 from .forms import PostForm
 from .forms import UserEditForm
+
 
 
 @login_required
@@ -144,6 +145,19 @@ class PostListView(ListView):
 @login_required
 def post_list(request, tag_slug=None):
     object_list = Post.objects.all()
+    search_form = SearchForm()
+    query = None
+
+    if 'query' in request.GET:
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data['query']
+            try:
+                object_list = Post.objects.filter(title__contains=query, status='published')
+            except:
+                object_list = None
+    else:
+        object_list = Post.objects.filter(status='published')
     tag = None
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
@@ -162,7 +176,8 @@ def post_list(request, tag_slug=None):
 
     return render(request, 'blog/post/list.html', {'page': page,
                                                    'posts': posts,
-                                                   'tag': tag})
+                                                   'tag': tag,
+                                                   'search_form': search_form})
 
 from .models import Comment
 from .forms import CommentForm
