@@ -2,7 +2,11 @@ from .models import Comment, User
 from django import forms
 from .models import Post
 from .models import PostPoint
-
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields = ('first_name', 'last_name', 'username',
+                  'email')
 class UserCreateForm(forms.ModelForm):
     password=forms.CharField(max_length=40,widget=forms.PasswordInput())
     class Meta:
