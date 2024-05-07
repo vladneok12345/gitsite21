@@ -28,6 +28,20 @@ def sign_up(request):
 
 
 @login_required
+def post_point_edit(request, post_point_id):
+    post_point = get_object_or_404(PostPoint, id=post_point_id)
+    post = get_object_or_404(Post, id=post_point.post.id)
+    post_point_edit_form = PostPointForm(instance=post_point)
+    if request.method == 'POST':
+        post_point_edit_form = PostPointForm(request.POST, request.FILES,
+                                             instance=post_point)
+        if post_point_edit_form.is_valid():
+            post_point_edit_form.save()
+    return render(request, 'blog/account/post_point_edit.html',
+                  {'form': post_point_edit_form,
+                   'post_point': post_point,
+                   'post': post})
+@login_required
 def post_point_add(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     form = PostPointForm()
@@ -52,6 +66,15 @@ def post_point_list(request, post_id):
                   'blog/account/post_points.html',
                   {'post': post,
                    'post_points': post_points})
+
+@login_required
+def post_point_delete(request, post_point_id):
+    try:
+        post_point = get_object_or_404(PostPoint, id=post_point_id)
+        post_point.delete()
+        return redirect('blog:post_point_list', post_id=post_point.post.id  )
+    except Post.DoesNotExist:
+        return redirect('blog:post_list')
 @login_required
 def post_delete(request, post_id):
     try:
@@ -91,7 +114,6 @@ def post_add(request):
         form=PostForm()
 
     return render(request, 'blog/account/post_add.html',{'form':form})
-
 @login_required
 def dashboard(request):
     user=request.user
