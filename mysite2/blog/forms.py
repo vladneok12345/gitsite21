@@ -3,6 +3,18 @@ from django import forms
 from .models import Post
 from .models import PostPoint
 
+class SearchForm(forms.Form):
+    query=forms.CharField(widget=forms.TextInput(attrs={
+        'class':'form-control mr-sm-2',
+        'type':'search',
+        'placeholder':'Search',
+        'aria-label':'Search'
+    }))
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields = ('first_name', 'last_name', 'username',
+                  'email')
 class UserCreateForm(forms.ModelForm):
     password=forms.CharField(max_length=40,widget=forms.PasswordInput())
     class Meta:
